@@ -26,22 +26,20 @@ const Index = () => {
       <Helmet>
         <link rel="shortcut icon" href={favicon} type="image/x-icon"/>
       </Helmet>
-      <React.StrictMode>
-        <BrowserRouter>
-          <Container>
-            <Routes>
-              <Route path="" element={<App />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/categories" element={<ExpensesByCategory />} />
-              <Route path="/list" element={<ExpensesList />} />
-              <Route path="/edit/:id" element={<EditExpense />} />
-            </Routes>
-          </Container>
-        </BrowserRouter>
+      <BrowserRouter>
+        <Container>
+          <Routes>
+            <Route path="" element={<App />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/categories" element={<ExpensesByCategory />} />
+            <Route path="/list" element={<ExpensesList />} />
+            <Route path="/edit/:id" element={<EditExpense />} />
+          </Routes>
+        </Container>
+      </BrowserRouter>
 
-        <Background />
-      </React.StrictMode>
+      <Background />
     </>
 
   );

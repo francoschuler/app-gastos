@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import {Titulo, ContenedorHeader, Header} from './../elements/Header'
 import Button from './../elements/Button';
@@ -6,6 +6,9 @@ import {Formulario, Input, ContenedorBoton} from './../elements/FormElements';
 import Boton from './../elements/Button';
 import {ReactComponent as SvgLogin} from './../images/registro.svg';
 import styled from 'styled-components';
+import {auth} from './../firebase/firebaseConfig';
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Svg = styled(SvgLogin)`
     width: 100%;
@@ -14,6 +17,68 @@ const Svg = styled(SvgLogin)`
 `;
 
 const Register = () => {
+
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [password2, setPassword2] = useState('');
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        switch(e.target.name) {
+            case 'email':
+                setEmail(value);
+                break;
+            case 'password':
+                setPassword(value);
+                break;
+            case 'password2':
+                setPassword2(value);
+                break;
+            default: break;
+        }
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const regex = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
+        if (!regex.test(email)) {
+            return;
+        }
+
+        if (email === '' || password === '' || password2 === '') {
+            return;
+        }
+
+        if (password !== password2) {
+            return;
+        }
+
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            navigate('/');
+        } catch (error) {
+            let mensaje = '';
+            switch(error.code){
+                case 'auth/invalid-password':
+                    mensaje = 'La contraseña tiene que ser de al menos 6 caracteres.'
+                    break;
+                case 'auth/email-already-in-use':
+                    mensaje = 'Ya existe una cuenta con el correo electrónico que has introducido.'
+                break;
+                case 'auth/invalid-email':
+                    mensaje = 'El correo electrónico no es válido (p.e. correo@correo.com)'
+                break;
+                default:
+                    mensaje = 'Hubo un error al intentar crear la cuenta.'
+                break;
+            }
+        }
+        
+    }
+
     return (
         <>
             <Helmet>
@@ -30,22 +95,28 @@ const Register = () => {
                 </ContenedorHeader>
             </Header>
 
-            <Formulario>
+            <Formulario onSubmit={handleSubmit}>
                 <Svg />
                 <Input
                     type='email'
                     name='email'
                     placeholder='Email'
+                    value={email}
+                    onChange={handleChange}
                 />
                 <Input
                     type='password'
                     name='password'
                     placeholder='Contraseña'
+                    value={password}
+                    onChange={handleChange}
                 />
                 <Input
                     type='password'
                     name='password2'
                     placeholder='Repetir Contraseña'
+                    value={password2}
+                    onChange={handleChange}
                 />
                 <ContenedorBoton>
                     <Boton as='button' primario type='submit'> Crear cuenta</Boton>
