@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import {auth} from './../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import Alert from '../elements/Alert';
 
 const Svg = styled(SvgLogin)`
     width: 100%;
@@ -23,6 +24,8 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
+    const [estadoAlerta, setEstadoAlerta] = useState(false);
+    const [mensajeAlerta, setMensajeAlerta] = useState({});
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -42,17 +45,34 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setEstadoAlerta(false);
+        setMensajeAlerta({});
         
         const regex = /[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/;
         if (!regex.test(email)) {
+            setEstadoAlerta(true);
+            setMensajeAlerta({
+                tipo: 'exito',
+                mensaje: 'El correo electrónico introducido no es válido. Revisa que el correo electrónico tenga el formato correcto (p.e. correo@correo.com)'
+            });
             return;
         }
 
         if (email === '' || password === '' || password2 === '') {
+            setEstadoAlerta(true);
+            setMensajeAlerta({
+                tipo: 'error',
+                mensaje: 'Falta algún campo por rellenar.'
+            });
             return;
         }
 
         if (password !== password2) {
+            setEstadoAlerta(true);
+            setMensajeAlerta({
+                tipo: 'error',
+                mensaje: 'Las contraseñas introducidas deben coincidir.'
+            });
             return;
         }
 
@@ -60,7 +80,7 @@ const Register = () => {
             await createUserWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (error) {
-            let mensaje = '';
+            let mensaje;
             switch(error.code){
                 case 'auth/invalid-password':
                     mensaje = 'La contraseña tiene que ser de al menos 6 caracteres.'
@@ -123,6 +143,13 @@ const Register = () => {
                 </ContenedorBoton>
 
             </Formulario>
+
+            <Alert 
+                tipo={mensajeAlerta.tipo} 
+                mensaje={mensajeAlerta.mensaje} 
+                estadoAlerta={estadoAlerta}
+                setEstadoAlerta={setEstadoAlerta}
+            />
         </>
     );
 }

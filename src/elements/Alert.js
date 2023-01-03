@@ -37,11 +37,13 @@ const ContenedorAlerta = styled.div`
  
     p {
  
-        background: ${(props) => {
-            if(props.tipo === 'error'){
-                return theme.rojo;
-            } else if (props.tipo === 'exito') {
-                return theme.verde;
+        background: ${({tipo}) => {
+            console.log(tipo);
+            
+            if(tipo === 'error'){
+                return Theme.rojo;
+            } else if (tipo === 'exito') {
+                return Theme.verde;
             } else {
                 return '#000';
             }
@@ -53,3 +55,37 @@ const ContenedorAlerta = styled.div`
         text-align: center;
     }
 `;
+
+const Alert = ({tipo, mensaje, estadoAlerta, setEstadoAlerta}) => {
+
+    console.log(tipo, mensaje);
+
+    useEffect(() => {
+        let tiempo;
+
+        if(estadoAlerta === true) {
+            tiempo = setTimeout(() => {
+                setEstadoAlerta(false);
+            }, 4000);
+        }
+        return () => clearTimeout(tiempo);
+
+    }, [estadoAlerta, setEstadoAlerta]);
+
+    return (
+
+        <>
+        {estadoAlerta && 
+            <ContenedorAlerta>
+                <p> {mensaje} </p>
+            </ContenedorAlerta>
+        }
+
+        </>
+        
+
+
+    );
+}
+ 
+export default Alert;
