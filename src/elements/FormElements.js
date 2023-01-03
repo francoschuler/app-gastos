@@ -43,6 +43,10 @@ const Input = styled.input`
     text-transform: uppercase;
     border: none;
     border-bottom: 2px solid ${Theme.grisClaro};
+    &:focus {
+        transition: .1s ease-in-out;
+        border-bottom: 2px solid ${Theme.azulClaro};
+    }
     outline: none;
  
     @media(max-width: 60rem){ /* 950px */
