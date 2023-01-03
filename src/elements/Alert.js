@@ -83,6 +83,4 @@ const ContenedorAlerta = styled.div`
     }
 `;
 
-
- 
 export default Alert;
