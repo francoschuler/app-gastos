@@ -2,6 +2,34 @@ import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Theme from '../Theme';
 
+const Alert = ({tipo, mensaje, estadoAlerta, setEstadoAlerta}) => {
+
+    useEffect(() => {
+        let tiempo;
+
+        if(estadoAlerta === true) {
+            tiempo = setTimeout(() => {
+                setEstadoAlerta(false);
+            }, 4000);
+        }
+        return () => clearTimeout(tiempo);
+
+    }, [estadoAlerta, setEstadoAlerta]);
+
+    return (
+
+        <>
+        {estadoAlerta && 
+            <ContenedorAlerta tipo={tipo}>
+                <p> {mensaje} </p>
+            </ContenedorAlerta>
+        }
+
+        </>
+
+    );
+}
+
 const slideDown = keyframes`
     0% {
         transform: translateY(-1.25rem); /* -20px */
@@ -38,7 +66,6 @@ const ContenedorAlerta = styled.div`
     p {
  
         background: ${({tipo}) => {
-            console.log(tipo);
             
             if(tipo === 'error'){
                 return Theme.rojo;
@@ -50,42 +77,12 @@ const ContenedorAlerta = styled.div`
         }};
         color: #fff;
         padding: 1.25rem 2.5rem; /* 20px 40px */
-        border-radius: 0.31rem; /* 5px */
+        border-radius: 0.62rem; /* 10px */
         box-shadow: 0px 0px 15px rgba(0,0,0,.1);
         text-align: center;
     }
 `;
 
-const Alert = ({tipo, mensaje, estadoAlerta, setEstadoAlerta}) => {
 
-    console.log(tipo, mensaje);
-
-    useEffect(() => {
-        let tiempo;
-
-        if(estadoAlerta === true) {
-            tiempo = setTimeout(() => {
-                setEstadoAlerta(false);
-            }, 4000);
-        }
-        return () => clearTimeout(tiempo);
-
-    }, [estadoAlerta, setEstadoAlerta]);
-
-    return (
-
-        <>
-        {estadoAlerta && 
-            <ContenedorAlerta>
-                <p> {mensaje} </p>
-            </ContenedorAlerta>
-        }
-
-        </>
-        
-
-
-    );
-}
  
 export default Alert;

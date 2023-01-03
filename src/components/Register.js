@@ -52,7 +52,7 @@ const Register = () => {
         if (!regex.test(email)) {
             setEstadoAlerta(true);
             setMensajeAlerta({
-                tipo: 'exito',
+                tipo: 'error',
                 mensaje: 'El correo electrónico introducido no es válido. Revisa que el correo electrónico tenga el formato correcto (p.e. correo@correo.com)'
             });
             return;
@@ -80,21 +80,31 @@ const Register = () => {
             await createUserWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (error) {
+            console.log(error)
+            setEstadoAlerta(true);
             let mensaje;
             switch(error.code){
-                case 'auth/invalid-password':
+                case 'auth/weak-password':
                     mensaje = 'La contraseña tiene que ser de al menos 6 caracteres.'
                     break;
+
                 case 'auth/email-already-in-use':
                     mensaje = 'Ya existe una cuenta con el correo electrónico que has introducido.'
-                break;
+                    break;
+
                 case 'auth/invalid-email':
                     mensaje = 'El correo electrónico no es válido (p.e. correo@correo.com)'
-                break;
+                    break;
+
                 default:
                     mensaje = 'Hubo un error al intentar crear la cuenta.'
-                break;
+                    break;
             }
+
+            setMensajeAlerta({
+                tipo: 'error',
+                mensaje: mensaje
+            })
         }
         
     }
