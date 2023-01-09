@@ -31,6 +31,12 @@ const Formulario = styled.form`
         &::placeholder {
             color: rgba(0,0,0,.2);
         }
+
+        transition: border-bottom .15s ease-in-out;
+        &:focus {
+            transition: border-bottom .15s ease-in-out;
+            border-bottom: 2.5px solid ${Theme.azulClaro};
+        }
     }
  
     @media(max-width: 60rem){ /* 950px */
@@ -40,13 +46,8 @@ const Formulario = styled.form`
  
 const Input = styled.input`
     font-size: 2.5rem; /* 40px */
-    text-transform: uppercase;
     border: none;
     border-bottom: 2px solid ${Theme.grisClaro};
-    &:focus {
-        transition: .1s ease-in-out;
-        border-bottom: 2px solid ${Theme.azulClaro};
-    }
     outline: none;
  
     @media(max-width: 60rem){ /* 950px */

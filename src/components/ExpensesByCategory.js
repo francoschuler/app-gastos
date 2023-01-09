@@ -2,6 +2,7 @@ import React from 'react';
 import {Titulo, ContenedorHeader, Header} from './../elements/Header';
 import { Helmet } from 'react-helmet';
 import BackButton from '../elements/BackButton';
+import TotalExpenses from './TotalExpenses';
 
 const ExpensesByCategory = () => {
     return (
@@ -16,6 +17,8 @@ const ExpensesByCategory = () => {
               <Titulo> Gastos por Categoría </Titulo>
             </ContenedorHeader>
           </Header>
+
+          <TotalExpenses />
         </>
       );
 }
