@@ -77,7 +77,7 @@ const ExpensesList = () => {
                     <Valor> {formatCantidad(gasto.cantidad)} </Valor>
 
                     <ContenedorBotones>
-                      <BotonAccion as={Link} to={`/editar/${gasto.id}`}>
+                      <BotonAccion as={Link} to={`/edit/${gasto.id}`}>
                         <IconoEditar/>
                       </BotonAccion>
                       <BotonAccion onClick={() => borrarGasto(gasto.id)}>

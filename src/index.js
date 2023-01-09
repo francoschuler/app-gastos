@@ -15,6 +15,7 @@ import favicon from './images/logo.png';
 import Background from './elements/Background'
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import { TotalLastMonthProvider } from './contexts/TotalLastMonthContext';
 
 WebFont.load({
   google: {
@@ -28,43 +29,46 @@ const Index = () => {
       <Helmet>
         <link rel="shortcut icon" href={favicon} type="image/x-icon"/>
       </Helmet>
+
       <AuthProvider>
-        <BrowserRouter>
-          <Container>
-            <Routes>
+        <TotalLastMonthProvider>
 
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+          <BrowserRouter>
+            <Container>
+              <Routes>
 
-              <Route path='/categories' element={
-                <PrivateRoute>
-                  <ExpensesByCategory />
-                </PrivateRoute>
-              }/>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              <Route path='/list' element={
-                <PrivateRoute>
-                  <ExpensesList />
-                </PrivateRoute>
-              }/>
+                <Route path='/categories' element={
+                  <PrivateRoute>
+                    <ExpensesByCategory />
+                  </PrivateRoute>
+                }/>
 
-              <Route path='/edit/:id' element={
-                <PrivateRoute>
-                  <EditExpense />
-                </PrivateRoute>
-              }/>
+                <Route path='/list' element={
+                  <PrivateRoute>
+                    <ExpensesList />
+                  </PrivateRoute>
+                }/>
 
+                <Route path='/edit/:id' element={
+                  <PrivateRoute>
+                    <EditExpense />
+                  </PrivateRoute>
+                }/>
 
-              <Route path='/' element={
-                <PrivateRoute>
-                  <App />
-                </PrivateRoute>
-              }/>
+                <Route path='/' element={
+                  <PrivateRoute>
+                    <App />
+                  </PrivateRoute>
+                }/>
 
+              </Routes>
+            </Container>
+          </BrowserRouter>
 
-            </Routes>
-          </Container>
-        </BrowserRouter>
+        </TotalLastMonthProvider>
       </AuthProvider>
 
       <Background />

@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Boton from '../elements/Button';
 import Select from '../elements/Select';
 import { ContenedorFiltros, Formulario, Input, InputGrande, ContenedorBoton } from './../elements/FormElements';
 import { ReactComponent as IconoPlus} from './../images/plus.svg';
+import { ReactComponent as IconoEditar} from './../images/editar.svg';
 import DatePicker from './DatePicker';
 import agregarGasto from '../firebase/agregarGasto';
 import getUnixTime from 'date-fns/getUnixTime';
-// import fromUnixTime from 'date-fns/fromUnixTime';
 import { useAuth } from './../contexts/AuthContext';
 import Alert from './../elements/Alert';
 import formatCantidad from '../utils/CurrencyConverter';
+import { fromUnixTime } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import editarGasto from '../firebase/editarGasto';
 
-const ExpenseForm = () => {
+const ExpenseForm = ({gasto}) => {
 
     const [descripcion, setDescripcion] = useState('');
     const [cantidad, setCantidad] = useState('');
@@ -22,6 +25,7 @@ const ExpenseForm = () => {
     const [alerta, setAlerta] = useState({});
 
     const { usuario } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         if (e.target.name === 'description') {
@@ -31,6 +35,20 @@ const ExpenseForm = () => {
         }
     }
 
+    useEffect(() => {
+        if (gasto) {
+            const data = gasto.data()
+            if (data.usuarioUid === usuario.uid) {
+                setCategoria(data.categoria);
+                setFecha(fromUnixTime(data.fecha));
+                setDescripcion(data.descripcion);
+                setCantidad(data.cantidad);
+            } else {
+                navigate('/list');
+            }
+        }
+    }, [gasto, usuario, navigate]); 
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -39,26 +57,54 @@ const ExpenseForm = () => {
         if (descripcion !== '' && cantidad !== '') {
 
             if (cantidadParseada) {
-                agregarGasto({
-                    usuarioUid: usuario.uid,
-                    categoria: categoria,
-                    descripcion: descripcion,
-                    cantidad: cantidadParseada,
-                    fecha: getUnixTime(fecha),
-                })
-                .then(() => {
-                    setCategoria('hogar')
-                    setDescripcion('');
-                    setCantidad('');
-                    setFecha(new Date());
 
-                    setAlerta({tipo: 'exito', mensaje: 'El gasto fue agregado correctamente.'});
-                    setEstadoAlerta(true);
-                })
-                .catch((error) => {
-                    setAlerta({tipo: 'error', mensaje: 'Hubo un error al intentar agregar el gasto.'});
-                    setEstadoAlerta(true);
-                });
+                // UPDATE
+                if (gasto) {
+                    editarGasto({
+                        id: gasto.id,
+                        categoria: categoria,
+                        descripcion: descripcion,
+                        cantidad: cantidadParseada,
+                        fecha: getUnixTime(fecha),
+                    })
+                    .then(() => {
+
+                        // setAlerta({tipo: 'exito', mensaje: 'El gasto fue editado correctamente.'});
+                        // setEstadoAlerta(true);
+
+                        navigate('/list');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        // setAlerta({tipo: 'error', mensaje: 'Hubo un error al intentar agregar el gasto.'});
+                        // setEstadoAlerta(true);
+                    });
+
+                //CREATE
+                } else {
+                    agregarGasto({
+                        usuarioUid: usuario.uid,
+                        categoria: categoria,
+                        descripcion: descripcion,
+                        cantidad: cantidadParseada,
+                        fecha: getUnixTime(fecha),
+                    })
+                    .then(() => {
+                        setCategoria('hogar')
+                        setDescripcion('');
+                        setCantidad('');
+                        setFecha(new Date());
+    
+                        setAlerta({tipo: 'exito', mensaje: 'El gasto fue agregado correctamente.'});
+                        setEstadoAlerta(true);
+                    })
+                    .catch((error) => {
+                        setAlerta({tipo: 'error', mensaje: 'Hubo un error al intentar agregar el gasto.'});
+                        setEstadoAlerta(true);
+                    });
+                }
+
+                
             } else {
                 setAlerta({tipo: 'error', mensaje: 'La cantidad introducida no es correcta.'});
                 setEstadoAlerta(true);
@@ -100,8 +146,8 @@ const ExpenseForm = () => {
 
             <ContenedorBoton>
                 <Boton as='button' primario conIcono type='submit'>
-                    Añadir Gasto 
-                    <IconoPlus />
+                    {gasto ? 'Editar Gasto ' : 'Añadir Gasto '} 
+                    {gasto ? <IconoEditar /> : <IconoPlus />}
                 </Boton>
             </ContenedorBoton>
 

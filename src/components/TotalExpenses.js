@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTotalLastMonth } from '../contexts/TotalLastMonthContext';
 import Theme from '../Theme';
 import formatCantidad from '../utils/CurrencyConverter';
 
@@ -23,10 +24,13 @@ const BarraTotal = styled.div`
 
 
 const TotalExpenses = () => {
+
+    const {total} = useTotalLastMonth();
+
     return (
         <BarraTotal>
             <p> Total gastado en el último mes </p>
-            <p> {formatCantidad(0.00)} </p>
+            <p> {formatCantidad(total)} </p>
         </BarraTotal>
     );
 }
